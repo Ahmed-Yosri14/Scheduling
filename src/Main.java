@@ -10,7 +10,7 @@ public class Main {
         for (int i = 0; i < numProcesses; i++) {
             System.out.println("Enter details for Process " + (i + 1) + ":");
             System.out.print("Name: ");
-            String name = scanner.next();
+           String name = scanner.next();
             System.out.print("Color: ");
             String color = scanner.next();
             System.out.print("Arrival Time: ");
@@ -52,5 +52,7 @@ public class Main {
 
         scheduler.schedule();
         scheduler.printResults();
+        System.out.println(scheduler.calculateAverageWaitingTime());
+        System.out.println(scheduler.calculateAverageTurnaroundTime());
     }
 }

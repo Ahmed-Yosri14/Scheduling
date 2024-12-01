@@ -6,6 +6,7 @@ public class Process {
     private final int priority;
     private int waitingTime;
     private int turnaroundTime;
+    public int remainingTime;
 
 
     public Process(String name, String color, int arrivalTime, int burstTime, int priority) {
@@ -14,6 +15,7 @@ public class Process {
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.priority = priority;
+        this.remainingTime=burstTime;
     }
 
     public String getName() {
