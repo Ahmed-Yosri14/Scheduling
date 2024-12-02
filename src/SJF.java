@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class SJF extends Scheduling {
-    public SJF(ArrayList<Process> processes) {
-        super(processes);
+    public SJF(ArrayList<Process> processes, Timeline timeline) {
+        super(processes, timeline);
     }
 
     @Override

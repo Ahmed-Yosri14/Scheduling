@@ -10,7 +10,7 @@ public class Main {
         for (int i = 0; i < numProcesses; i++) {
             System.out.println("Enter details for Process " + (i + 1) + ":");
             System.out.print("Name: ");
-           String name = scanner.next();
+            int id = scanner.nextInt();
             System.out.print("Color: ");
             String color = scanner.next();
             System.out.print("Arrival Time: ");
@@ -20,7 +20,7 @@ public class Main {
             System.out.print("Priority: ");
             int priority = scanner.nextInt();
 
-            processes.add(new Process(name, color, arrivalTime, burstTime, priority));
+            processes.add(new Process(id, color, arrivalTime, burstTime, priority));
         }
 
         System.out.println("\nChoose a scheduling algorithm:");
@@ -30,29 +30,15 @@ public class Main {
         System.out.println("4. FCAI Scheduling");
 
         int choice = scanner.nextInt();
-        Scheduling scheduler = null;
+        Scheduling priorityScheduler = null;
+        Scheduling sjfScheduler2 = null;
+        Scheduling srtfScheduler3 = null;
+        Scheduling fcaiScheduler4 = null;
 
-        switch (choice) {
-            case 1:
-                scheduler = new Priority(processes);
-                break;
-            case 2:
-                scheduler = new SJF(processes);
-                break;
-            case 3:
-                scheduler = new SRTF(processes);
-                break;
-            case 4:
-                scheduler = new FCAI(processes);
-                break;
-            default:
-                System.out.println("Invalid choice!");
-                System.exit(0);
-        }
+        priorityScheduler = new Priority(processes, new Timeline());
+        sjfScheduler2 = new SJF(processes, new Timeline());
+        srtfScheduler3 = new SRTF(processes, new Timeline());
+        fcaiScheduler4 = new FCAI(processes, new Timeline());
 
-        scheduler.schedule();
-        scheduler.printResults();
-        System.out.println(scheduler.calculateAverageWaitingTime());
-        System.out.println(scheduler.calculateAverageTurnaroundTime());
     }
 }

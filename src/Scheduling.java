@@ -2,9 +2,10 @@ import java.util.ArrayList;
 
 public abstract class Scheduling {
     protected ArrayList<Process> processes;
-
-    public Scheduling(ArrayList<Process> processes) {
+    protected Timeline timeline;
+    public Scheduling(ArrayList<Process> processes, Timeline timeline) {
         this.processes = processes;
+        this.timeline = timeline;
     }
 
     public abstract void schedule();

@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class Priority extends Scheduling {
-    public Priority(ArrayList<Process> processes) {
-        super(processes);
+    public Priority(ArrayList<Process> processes, Timeline timeline) {
+        super(processes, timeline);
     }
 
     @Override

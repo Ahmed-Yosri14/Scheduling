@@ -3,8 +3,8 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 public class SRTF extends Scheduling {
-    public SRTF(ArrayList<Process> processes) {
-        super(processes);
+    public SRTF(ArrayList<Process> processes, Timeline timeline) {
+        super(processes, timeline);
     }
 
     @Override
@@ -25,6 +25,7 @@ public class SRTF extends Scheduling {
                 continue;
             }
             Process currentProcess = queue.poll();
+            timeline.assign_process(currentProcess.getId(),1);
             currentProcess.remainingTime--;
             currentTime++;
             if (currentProcess.remainingTime == 0) {

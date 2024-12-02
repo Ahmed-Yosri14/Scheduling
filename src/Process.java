@@ -1,5 +1,5 @@
 public class Process {
-    private final String name;
+    private final int id;
     private final String color;
     private final int arrivalTime;
     private final int burstTime;
@@ -9,8 +9,8 @@ public class Process {
     public int remainingTime;
 
 
-    public Process(String name, String color, int arrivalTime, int burstTime, int priority) {
-        this.name = name;
+    public Process(int id, String color, int arrivalTime, int burstTime, int priority) {
+        this.id = id;
         this.color = color;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
@@ -18,8 +18,8 @@ public class Process {
         this.remainingTime=burstTime;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     public String getColor() {
@@ -57,8 +57,8 @@ public class Process {
     @Override
     public String toString() {
         return String.format(
-                "Process{name='%s', color='%s', arrivalTime=%d, burstTime=%d, priority=%d}",
-                name, color, arrivalTime, burstTime, priority
+                "Process{id='%s', color='%s', arrivalTime=%d, burstTime=%d, priority=%d}",
+                id, color, arrivalTime, burstTime, priority
         );
     }
 }

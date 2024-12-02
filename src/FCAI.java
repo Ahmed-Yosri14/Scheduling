@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class FCAI extends Scheduling {
-    public FCAI(ArrayList<Process> processes) {
-        super(processes);
+    public FCAI(ArrayList<Process> processes, Timeline timeline) {
+        super(processes, timeline);
     }
 
     @Override
