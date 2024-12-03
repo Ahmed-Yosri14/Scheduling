@@ -53,17 +53,17 @@ public class FCAI extends Scheduling {
                 }
             }
 
-            if(spent>=Math.ceil(now.getWaitingTime()*0.4) ||now.burstTime==0 || spent==now.getWaitingTime() ){
-                if(now.burstTime==0){
+            if(spent>=Math.ceil(now.getQuantumTime()*0.4) ||now.getBurstTime()==0 || spent==now.getQuantumTime() ){
+                if(now.getBurstTime()==0){
                     timeline.assign_process(itr-spent,spent,now.getId());
                     if(!curr.isEmpty())now=curr.poll();
                     else now=null;
                     spent=0;
                 }
-                else if(now.waitingTime==spent){
+                else if(now.getQuantumTime()==spent){
                     timeline.assign_process(itr-spent,spent,now.getId());
                     now.fcaiFactor=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0);
-                    now.waitingTime=now.waitingTime+2;
+                    now.setQuantumTime(now.getQuantumTime()+2);
                     ExtendedProcess temp=now;
                     if(!curr.isEmpty())now=curr.poll();
                     else now=null;
@@ -72,10 +72,10 @@ public class FCAI extends Scheduling {
                 }
                 else if(!curr.isEmpty() &&
                         ( curr.peek().fcaiFactor<=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0))
-                        && spent>Math.ceil(now.getWaitingTime()*0.4) ){
+                        && spent>Math.ceil(now.getQuantumTime()*0.4) ){
                     timeline.assign_process(itr-spent,spent,now.getId());
                     now.fcaiFactor=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0);
-                    now.waitingTime=now.waitingTime+(now.waitingTime-spent);
+                    now.setQuantumTime(now.getQuantumTime()+(now.getQuantumTime()-spent));
                     ExtendedProcess temp=now;
                     if(!curr.isEmpty())now=curr.poll();
                     else now=null;
@@ -85,7 +85,7 @@ public class FCAI extends Scheduling {
 
             }
             if(now!=null)
-            now.burstTime=now.burstTime-1;
+            now.setBurstTime(now.getBurstTime()-1);
             spent++;
             itr++;
         }
@@ -94,8 +94,7 @@ public class FCAI extends Scheduling {
 class ExtendedProcess extends Process{
     public int fcaiFactor;
     public ExtendedProcess(Process process,int fcaiFactor) {
-        super(process.getId(), process.getColor(),process.getArrivalTime(),process.getBurstTime(),process.getPriority());
+        super(process.getId(), process.getColor(),process.getArrivalTime(),process.getBurstTime(),process.getPriority(), process.getQuantumTime());
         this.fcaiFactor=fcaiFactor;
-        this.waitingTime=process.waitingTime;
     }
 }

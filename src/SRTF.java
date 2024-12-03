@@ -10,13 +10,13 @@ public class SRTF extends Scheduling {
     @Override
     public void schedule() {
         processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
-        PriorityQueue<Process> queue = new PriorityQueue<>(Comparator.comparingInt(p -> p.remainingTime));
+        PriorityQueue<Process> queue = new PriorityQueue<>(Comparator.comparingInt(p -> p.getRemainingTime()));
         int currentTime = 0;
         int completed = 0;
         while (completed < processes.size()) {
             for (Process process : processes) {
-                int x=(process.getArrivalTime()),y=process.remainingTime;
-                if (process.getArrivalTime() <= currentTime && process.remainingTime > 0&&!queue.contains(process)) {
+                int x=(process.getArrivalTime()),y=process.getRemainingTime();
+                if (process.getArrivalTime() <= currentTime && process.getRemainingTime() > 0&&!queue.contains(process)) {
                     queue.add(process);
                 }
             }
@@ -26,9 +26,9 @@ public class SRTF extends Scheduling {
             }
             Process currentProcess = queue.poll();
             timeline.assign_process(currentTime,1,currentProcess.getId());
-            currentProcess.remainingTime--;
+            currentProcess.setRemainingTime(currentProcess.getRemainingTime()-1);
             currentTime++;
-            if (currentProcess.remainingTime == 0) {
+            if (currentProcess.getRemainingTime() == 0) {
                 completed++;
                 currentProcess.setTurnaroundTime(currentTime-currentProcess.getArrivalTime());
                 currentProcess.setWaitingTime(currentProcess.getTurnaroundTime()-currentProcess.getBurstTime());

@@ -2,20 +2,36 @@ public class Process {
     private final int id;
     private final String color;
     private final int arrivalTime;
-    public int burstTime;
-    private final int priority;
-    public int waitingTime;
+    private int burstTime;
+    private int priority;
+    private int waitingTime;
     private int turnaroundTime;
-    public int remainingTime;
+    private int remainingTime;
+    private int quantumTime;
 
 
-    public Process(int id, String color, int arrivalTime, int burstTime, int priority) {
+    public Process(int id, String color, int arrivalTime, int burstTime, int priority, int quantumTime) {
         this.id = id;
         this.color = color;
         this.arrivalTime = arrivalTime;
         this.burstTime = burstTime;
         this.priority = priority;
         this.remainingTime=burstTime;
+        this.quantumTime=quantumTime;
+    }
+
+    public int getQuantumTime() {
+        return quantumTime;
+    }
+    public void setQuantumTime(int quantumTime) {
+        this.quantumTime = quantumTime;
+    }
+
+    public int getRemainingTime() {
+        return remainingTime;
+    }
+    public void setRemainingTime(int remainingTime) {
+        this.remainingTime = remainingTime;
     }
 
     public int getId() {
@@ -33,9 +49,16 @@ public class Process {
     public int getBurstTime() {
         return burstTime;
     }
+    public void setBurstTime(int burstTime) {
+        this.burstTime = burstTime;
+    }
 
     public int getPriority() {
         return priority;
+    }
+    public void increasePriority() {
+        this.priority--;
+        return;
     }
 
     public int getWaitingTime() {
