@@ -2,9 +2,9 @@ public class Process {
     private final int id;
     private final String color;
     private final int arrivalTime;
-    private final int burstTime;
+    public int burstTime;
     private final int priority;
-    private int waitingTime;
+    public int waitingTime;
     private int turnaroundTime;
     public int remainingTime;
 
