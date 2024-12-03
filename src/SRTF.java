@@ -25,7 +25,7 @@ public class SRTF extends Scheduling {
                 continue;
             }
             Process currentProcess = queue.poll();
-            timeline.assign_process(currentProcess.getId(),1);
+            timeline.assign_process(currentTime,1,currentProcess.getId());
             currentProcess.remainingTime--;
             currentTime++;
             if (currentProcess.remainingTime == 0) {

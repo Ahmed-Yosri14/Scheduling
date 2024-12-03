@@ -14,7 +14,7 @@ public abstract class Scheduling {
         System.out.println("\nScheduling Results:");
         for (Process process : processes) {
             System.out.printf("Process %s - Waiting Time: %d, Turnaround Time: %d\n",
-                    process.getName(),
+                    process.getId(),
                     process.getWaitingTime(),
                     process.getTurnaroundTime());
         }

@@ -1,0 +1,120 @@
+import javax.swing.*;
+import java.awt.*;
+import java.util.ArrayList;
+
+public class SchedulerGUI extends JFrame {
+    private ArrayList<Process> processes;
+    private Timeline timeline;
+
+    public SchedulerGUI(ArrayList<Process> processes, Timeline timeline,String SelectedAlgorithm) {
+        this.processes = processes;
+        this.timeline = timeline;
+        setTitle("CPU Scheduling Simulator");
+        setSize(900, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLayout(new BorderLayout());
+
+        // Add panels
+        add(createGraphPanel(), BorderLayout.CENTER);
+        add(createProcessTablePanel(), BorderLayout.EAST);
+        add(createStatisticsPanel(SelectedAlgorithm), BorderLayout.SOUTH);
+
+        setVisible(true);
+    }
+
+    private JPanel createGraphPanel() {
+        JPanel graphPanel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                drawTimeline(g);
+            }
+        };
+        graphPanel.setPreferredSize(new Dimension(600, 400));
+        graphPanel.setBorder(BorderFactory.createTitledBorder("CPU Scheduling Graph"));
+        return graphPanel;
+    }
+
+    private void drawTimeline(Graphics g) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(Color.BLACK);
+        int graphWidth = getWidth();
+        int graphHeight = getHeight();
+        int padding = 20;
+        g2d.drawLine(padding, padding, padding, graphHeight - padding);
+        int x = 20, y = 50, height = 30;
+
+        for (int i = 0; i < processes.size(); i++) {
+            g2d.drawString("P" + processes.get(i).getId(), padding-15 , y+(i * height) + 20);
+            g2d.setColor(Color.BLACK);
+        }
+        g2d.drawLine(padding, graphHeight - padding, graphWidth - padding, graphHeight - padding);
+        for (Pair pair : timeline.getTimeline()) {
+            Process process = processes.get(pair.getId());
+
+
+            g.setColor(Color.decode(process.getColor()));
+            g.fillRect(x, y + (process.getId() * height), pair.getSecond() * 10, height - 5);
+            g.setColor(Color.WHITE);
+            g.drawString("", x + 5, y + (process.getId() * height) + 20);
+            x += pair.getSecond() * 10;
+        }
+    }
+
+    private JPanel createProcessTablePanel() {
+        String[] columnNames = {"Process", "Color", "Arrival Time", "Burst Time", "Priority"};
+        Object[][] data = new Object[processes.size()][5];
+
+        for (int i = 0; i < processes.size(); i++) {
+            Process process = processes.get(i);
+            data[i][0] = "P" + process.getId();
+            data[i][1] = process.getColor();
+            data[i][2] = process.getArrivalTime();
+            data[i][3] = process.getBurstTime();
+            data[i][4] = process.getPriority();
+        }
+
+        JTable processTable = new JTable(data, columnNames);
+        JScrollPane scrollPane = new JScrollPane(processTable);
+
+        JPanel tablePanel = new JPanel();
+        tablePanel.setLayout(new BorderLayout());
+        tablePanel.add(scrollPane, BorderLayout.CENTER);
+        tablePanel.setPreferredSize(new Dimension(300, 400));
+        tablePanel.setBorder(BorderFactory.createTitledBorder("Processes Information"));
+
+        return tablePanel;
+    }
+
+    private JPanel createStatisticsPanel(String SelectedAlgorithm) {
+        JPanel statsPanel = new JPanel();
+        statsPanel.setLayout(new GridLayout(3, 1));
+
+        JLabel scheduleNameLabel = new JLabel("Schedule Name: " + SelectedAlgorithm);
+        JLabel avgWaitingTimeLabel = new JLabel("AWT: " + calculateAverageWaitingTime());
+        JLabel avgTurnaroundTimeLabel = new JLabel("ATAT: " + calculateAverageTurnaroundTime());
+
+        statsPanel.add(scheduleNameLabel);
+        statsPanel.add(avgWaitingTimeLabel);
+        statsPanel.add(avgTurnaroundTimeLabel);
+
+        statsPanel.setBorder(BorderFactory.createTitledBorder("Statistics"));
+        return statsPanel;
+    }
+
+    private double calculateAverageWaitingTime() {
+        int totalWaitingTime = 0;
+        for (Process process : processes) {
+            totalWaitingTime += process.getWaitingTime();
+        }
+        return (double) totalWaitingTime / processes.size();
+    }
+
+    private double calculateAverageTurnaroundTime() {
+        int totalTurnaroundTime = 0;
+        for (Process process : processes) {
+            totalTurnaroundTime += process.getTurnaroundTime();
+        }
+        return (double) totalTurnaroundTime / processes.size();
+    }
+}
