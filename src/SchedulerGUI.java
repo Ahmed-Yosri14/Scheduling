@@ -5,19 +5,17 @@ import java.util.ArrayList;
 public class SchedulerGUI extends JFrame {
     private ArrayList<Process> processes;
     private Timeline timeline;
-
-    public SchedulerGUI(ArrayList<Process> processes, Timeline timeline,String SelectedAlgorithm) {
+    private int context_time;
+    public SchedulerGUI(ArrayList<Process> processes, Timeline timeline,String SelectedAlgorithm, int context_time) {
         this.processes = processes;
         this.timeline = timeline;
+        this.context_time = context_time;
         setTitle("CPU Scheduling Simulator");
         setSize(900, 600);
         setLayout(new BorderLayout());
-
-        // Add panels
         add(createGraphPanel(), BorderLayout.CENTER);
         add(createProcessTablePanel(), BorderLayout.EAST);
         add(createStatisticsPanel(SelectedAlgorithm), BorderLayout.SOUTH);
-
         setVisible(true);
     }
 
@@ -55,8 +53,8 @@ public class SchedulerGUI extends JFrame {
             g.setColor(Color.decode(process.getColor()));
             g.fillRect(x, y + (process.getId() * height), pair.getSecond() * 10, height - 5);
             g.setColor(Color.WHITE);
-            g.drawString("", x + 5, y + (process.getId() * height) + 20);
             x += pair.getSecond() * 10;
+            x+=5*context_time;
         }
     }
 
