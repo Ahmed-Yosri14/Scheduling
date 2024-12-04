@@ -25,6 +25,10 @@ public class FCAI extends Scheduling {
                 return ret;
             }
         });
+        int [][]times=new int [processes.size()+1][3];
+        // [idx][0] -> arrival time
+        // [idx][1] -> actual execution time
+        // [idx][2] -> total time
         int mxBurstTime=0;
         int mxArrivalTime=0;
         for(var i:processes){
@@ -89,6 +93,19 @@ public class FCAI extends Scheduling {
             spent++;
             itr++;
         }
+        for(var idx:processes)
+        for(var i : timeline.getTimeline()){
+            if(i.getId()==idx.getId()){
+                times[idx.getId()][0]=idx.getArrivalTime();
+                times[idx.getId()][1]+=i.getSecond();
+                times[idx.getId()][2]=i.getSecond()+i.getFirst();
+            }
+        }
+        for(var idx:processes){
+            idx.setWaitingTime((times[idx.getId()][2]-times[idx.getId()][0])-times[idx.getId()][1]);
+            idx.setTurnaroundTime(times[idx.getId()][2]-times[idx.getId()][0]);
+        }
+
     }
 }
 class ExtendedProcess extends Process{
