@@ -51,6 +51,6 @@ public class MainGui extends JFrame implements ActionListener {
             Algorithm = "Sjf";
         }
         scheduling.schedule();
-        SchedulerGUI scheduler = new SchedulerGUI(processes,scheduling.timeline,Algorithm);
+        SchedulerGUI scheduler = new SchedulerGUI(processes,scheduling.timeline,Algorithm,5);
     }
 }
