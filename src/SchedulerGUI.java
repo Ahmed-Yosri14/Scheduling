@@ -11,7 +11,6 @@ public class SchedulerGUI extends JFrame {
         this.timeline = timeline;
         setTitle("CPU Scheduling Simulator");
         setSize(900, 600);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Add panels
@@ -62,8 +61,8 @@ public class SchedulerGUI extends JFrame {
     }
 
     private JPanel createProcessTablePanel() {
-        String[] columnNames = {"Process", "Color", "Arrival Time", "Burst Time", "Priority"};
-        Object[][] data = new Object[processes.size()][5];
+        String[] columnNames = {"Process", "Color", "Arrival Time", "Burst Time", "Priority", "Wait Time", "Turnaround Time"};
+        Object[][] data = new Object[processes.size()][7];
 
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.get(i);
@@ -72,6 +71,8 @@ public class SchedulerGUI extends JFrame {
             data[i][2] = process.getArrivalTime();
             data[i][3] = process.getBurstTime();
             data[i][4] = process.getPriority();
+            data[i][5] = process.getWaitingTime();      // Waiting Time (WT)
+            data[i][6] = process.getTurnaroundTime();   // Turnaround Time (TAT)
         }
 
         JTable processTable = new JTable(data, columnNames);
@@ -80,11 +81,12 @@ public class SchedulerGUI extends JFrame {
         JPanel tablePanel = new JPanel();
         tablePanel.setLayout(new BorderLayout());
         tablePanel.add(scrollPane, BorderLayout.CENTER);
-        tablePanel.setPreferredSize(new Dimension(300, 400));
+        tablePanel.setPreferredSize(new Dimension(350, 400));
         tablePanel.setBorder(BorderFactory.createTitledBorder("Processes Information"));
 
         return tablePanel;
     }
+
 
     private JPanel createStatisticsPanel(String SelectedAlgorithm) {
         JPanel statsPanel = new JPanel();
