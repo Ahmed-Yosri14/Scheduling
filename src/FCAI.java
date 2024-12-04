@@ -60,6 +60,9 @@ public class FCAI extends Scheduling {
             if(spent>=Math.ceil(now.getQuantumTime()*0.4) ||now.getBurstTime()==0 || spent==now.getQuantumTime() ){
                 if(now.getBurstTime()==0){
                     timeline.assign_process(itr-spent,spent,now.getId());
+                    System.out.print(String.format("P%d %d -> ",now.getId(),now.getQuantumTime()));
+                    now.setQuantumTime(now.getQuantumTime()+2);
+                    System.out.println(now.getQuantumTime());
                     if(!curr.isEmpty())now=curr.poll();
                     else now=null;
                     spent=0;
@@ -67,7 +70,9 @@ public class FCAI extends Scheduling {
                 else if(now.getQuantumTime()==spent){
                     timeline.assign_process(itr-spent,spent,now.getId());
                     now.fcaiFactor=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0);
+                    System.out.print(String.format("P%d %d -> ",now.getId(),now.getQuantumTime()));
                     now.setQuantumTime(now.getQuantumTime()+2);
+                    System.out.println(now.getQuantumTime());
                     ExtendedProcess temp=now;
                     if(!curr.isEmpty())now=curr.poll();
                     else now=null;
@@ -79,7 +84,9 @@ public class FCAI extends Scheduling {
                         && spent>Math.ceil(now.getQuantumTime()*0.4) ){
                     timeline.assign_process(itr-spent,spent,now.getId());
                     now.fcaiFactor=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0);
+                    System.out.print(String.format("P%d %d -> ",now.getId(),now.getQuantumTime()));
                     now.setQuantumTime(now.getQuantumTime()+(now.getQuantumTime()-spent));
+                    System.out.println(now.getQuantumTime());
                     ExtendedProcess temp=now;
                     if(!curr.isEmpty())now=curr.poll();
                     else now=null;
