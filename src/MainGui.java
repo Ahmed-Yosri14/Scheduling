@@ -20,9 +20,7 @@ public class MainGui extends JFrame implements ActionListener {
         this.add(fcai);
         this.add(srtf);
         this.add(sjf);
-
         this.setVisible(true);
-
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -31,7 +29,7 @@ public class MainGui extends JFrame implements ActionListener {
         processes.add(new Process(1, "#00FF00", 3, 6, 9,3));
         processes.add(new Process(2, "#0000FF", 4, 10, 3,5));
         processes.add(new Process(3, "#111111", 29, 4, 10,3));
-        FCAI a=new FCAI(processes,new Timeline());
+        FCAI a = new FCAI(processes,new Timeline());
         Scheduling scheduling = null;
         String Algorithm = "";
         if (e.getSource() == priority) {

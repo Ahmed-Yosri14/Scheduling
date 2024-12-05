@@ -15,7 +15,7 @@ public class SRTF extends Scheduling {
         int completed = 0;
         while (completed < processes.size()) {
             for (Process process : processes) {
-                int x=(process.getArrivalTime()),y=process.getRemainingTime();
+                int x =(process.getArrivalTime()),y=process.getRemainingTime();
                 if (process.getArrivalTime() <= currentTime && process.getRemainingTime() > 0&&!queue.contains(process)) {
                     queue.add(process);
                 }

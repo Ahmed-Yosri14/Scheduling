@@ -49,7 +49,6 @@ public class SchedulerGUI extends JFrame {
         for (Pair pair : timeline.getTimeline()) {
             Process process = processes.get(pair.getId());
 
-
             g.setColor(Color.decode(process.getColor()));
             g.fillRect(x, y + (process.getId() * height), pair.getSecond() * 10, height - 5);
             g.setColor(Color.WHITE);
