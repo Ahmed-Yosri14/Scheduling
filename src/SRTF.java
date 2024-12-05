@@ -6,7 +6,7 @@ public class SRTF extends Scheduling {
     public SRTF(ArrayList<Process> processes, Timeline timeline) {
         super(processes, timeline);
     }
-
+   int last_process_id=-1;
     @Override
     public void schedule() {
         processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
@@ -25,6 +25,11 @@ public class SRTF extends Scheduling {
                 continue;
             }
             Process currentProcess = queue.poll();
+            if (last_process_id!=currentProcess.getId()){
+                last_process_id=currentProcess.getId();
+                currentTime+=currentProcess.getContextSwitchTime();
+                continue;
+            }
             timeline.assign_process(currentTime,1,currentProcess.getId());
             currentProcess.setRemainingTime(currentProcess.getRemainingTime()-1);
             currentTime++;
