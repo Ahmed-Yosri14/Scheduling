@@ -34,17 +34,14 @@ public class SRTF extends Scheduling {
             if (last_process_id!=currentProcess.getId()&&last_process_id!=-1){
                 currentTime+=currentProcess.getContextSwitchTime();
             }
-            else currentProcess.setArrivalTime(currentProcess.getArrivalTime()+1);
             timeline.assign_process(currentTime,1,currentProcess.getId());
             last_process_id=currentProcess.getId();
             currentProcess.setRemainingTime(currentProcess.getRemainingTime()-1);
-            currentProcess.setWaitingTime(currentProcess.getWaitingTime()+currentTime-currentProcess.getArrivalTime());
-            currentProcess.setArrivalTime(currentTime);
             currentTime++;
             if (currentProcess.getRemainingTime() == 0) {
                 completed++;
                 currentProcess.setTurnaroundTime(currentTime-currentProcess.getArrivalTime());
-                currentProcess.setArrivalTime(deepCopy.get(currentProcess.getId()).getArrivalTime());
+                currentProcess.setWaitingTime(currentProcess.getTurnaroundTime()-currentProcess.getBurstTime());
             }
         }
     }
