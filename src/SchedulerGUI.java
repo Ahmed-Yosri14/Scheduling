@@ -49,7 +49,7 @@ public class SchedulerGUI extends JFrame {
         g2d.drawLine(padding, graphHeight - padding, graphWidth - padding, graphHeight - padding);
         for (Pair pair : timeline.getTimeline()) {
             Process process = processes.get(pair.getId());
-            x+=(pair.getFirst()-time)*2;
+            if (pair.getFirst()!=0){x+=(pair.getFirst()-time)*2;}
             g.setColor(Color.decode(process.getColor()));
             g.fillRect(x, y + (process.getId() * height), pair.getSecond() * 10, height - 5);
             g.setColor(Color.WHITE);

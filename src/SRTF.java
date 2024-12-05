@@ -9,6 +9,12 @@ public class SRTF extends Scheduling {
    int last_process_id=-1;
     @Override
     public void schedule() {
+        ArrayList<Process> deepCopy = new ArrayList<>();
+        for (Process process : processes) {
+            deepCopy.add(new Process(process.getId(), process.getColor(), process.getArrivalTime(),
+                    process.getBurstTime(), process.getPriority(), process.getQuantumTime(), process.getContextSwitchTime()));
+        }
+        deepCopy.sort(Comparator.comparingInt(Process::getId));
         processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
         PriorityQueue<Process> queue = new PriorityQueue<>(Comparator.comparingInt(p -> p.getRemainingTime()));
         int currentTime = 0;
@@ -25,18 +31,20 @@ public class SRTF extends Scheduling {
                 continue;
             }
             Process currentProcess = queue.poll();
-            if (last_process_id!=currentProcess.getId()){
-                last_process_id=currentProcess.getId();
+            if (last_process_id!=currentProcess.getId()&&last_process_id!=-1){
                 currentTime+=currentProcess.getContextSwitchTime();
-                continue;
             }
+            else currentProcess.setArrivalTime(currentProcess.getArrivalTime()+1);
             timeline.assign_process(currentTime,1,currentProcess.getId());
+            last_process_id=currentProcess.getId();
             currentProcess.setRemainingTime(currentProcess.getRemainingTime()-1);
+            currentProcess.setWaitingTime(currentProcess.getWaitingTime()+currentTime-currentProcess.getArrivalTime());
+            currentProcess.setArrivalTime(currentTime);
             currentTime++;
             if (currentProcess.getRemainingTime() == 0) {
                 completed++;
                 currentProcess.setTurnaroundTime(currentTime-currentProcess.getArrivalTime());
-                currentProcess.setWaitingTime(currentProcess.getTurnaroundTime()-currentProcess.getBurstTime());
+                currentProcess.setArrivalTime(deepCopy.get(currentProcess.getId()).getArrivalTime());
             }
         }
     }

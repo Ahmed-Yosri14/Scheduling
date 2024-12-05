@@ -1,7 +1,7 @@
 public class Process {
     private final int id;
     private final String color;
-    private final int arrivalTime;
+    private int arrivalTime;
     private int burstTime;
     private int priority;
     private int waitingTime;
@@ -73,8 +73,12 @@ public class Process {
         return waitingTime;
     }
 
+
     public void setWaitingTime(int waitingTime) {
         this.waitingTime = waitingTime;
+    }
+    public void setArrivalTime(int Time) {
+        this.arrivalTime = Time;
     }
 
     public int getTurnaroundTime() {
