@@ -8,9 +8,9 @@ public class Process {
     private int turnaroundTime;
     private int remainingTime;
     private int quantumTime;
+    private int contextSwitchTime;
 
-
-    public Process(int id, String color, int arrivalTime, int burstTime, int priority, int quantumTime) {
+    public Process(int id, String color, int arrivalTime, int burstTime, int priority, int quantumTime,int contextSwitchTime) {
         this.id = id;
         this.color = color;
         this.arrivalTime = arrivalTime;
@@ -18,7 +18,15 @@ public class Process {
         this.priority = priority;
         this.remainingTime=burstTime;
         this.quantumTime=quantumTime;
+        this.contextSwitchTime=contextSwitchTime;
     }
+    public int getContextSwitchTime() {
+        return contextSwitchTime;
+    }
+    public void setContextSwitchTime(int contextSwitchTime) {
+        this.contextSwitchTime = contextSwitchTime;
+    }
+
 
     public int getQuantumTime() {
         return quantumTime;

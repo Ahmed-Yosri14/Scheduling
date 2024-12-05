@@ -2,18 +2,27 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class MainGui extends JFrame implements ActionListener {
-    AlgorithmButton priority , fcai,srtf,sjf;
-    private int x=170 , y=500 ;
-    MainGui(){
-        priority = new AlgorithmButton("PRIORITY",this,x , y);
-        fcai = new AlgorithmButton("FCAI",this,x*2 , y);
-        srtf = new AlgorithmButton("SRTF",this,x*3,y);
-        sjf = new AlgorithmButton("SJF",this,x*4,y);
+    AlgorithmButton priority, fcai, srtf, sjf;
+    private int x = 170, y = 500;
+
+    private List<String> colors = List.of(
+            "#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF",
+            "#FF00FF", "#FFA500", "#FFC0CB", "#808080", "#D3D3D3"
+    );
+
+    MainGui() {
+        priority = new AlgorithmButton("PRIORITY", this, x, y);
+        fcai = new AlgorithmButton("FCAI", this, x * 2, y);
+        srtf = new AlgorithmButton("SRTF", this, x * 3, y);
+        sjf = new AlgorithmButton("SJF", this, x * 4, y);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1000,1000);
+        this.setSize(1000, 1000);
         this.setLayout(null);
         this.setLocationRelativeTo(null);
         this.add(priority);
@@ -22,33 +31,84 @@ public class MainGui extends JFrame implements ActionListener {
         this.add(sjf);
         this.setVisible(true);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         ArrayList<Process> processes = new ArrayList<>();
-        processes.add(new Process(0, "#FF0000", 0, 17, 4,4));
-        processes.add(new Process(1, "#00FF00", 3, 6, 9,3));
-        processes.add(new Process(2, "#0000FF", 4, 10, 3,5));
-        processes.add(new Process(3, "#111111", 29, 4, 10,3));
-        FCAI a = new FCAI(processes,new Timeline());
+        int contextSwitchTime = 0;
+
+        // Read the input file and add processes
+        try {
+            String fileName = "C:\\Users\\DELL\\IdeaProjects\\Scheduling\\src\\input.txt";
+            File file = new File(fileName);
+
+            if (!file.exists()) {
+                throw new IOException("File not found: " + fileName);
+            }
+
+            try (Scanner scanner = new Scanner(file)) {
+                int numProcesses = Integer.parseInt(scanner.nextLine()); // Read number of processes
+                int processId = 0; // Starting process ID
+                int colorIndex = 0; // To cycle through colors
+
+                while (scanner.hasNextLine() && numProcesses > 0) {
+                    String line = scanner.nextLine();
+                    String[] parts = line.split(" ");
+
+                    if (parts.length == 4) {
+                        int arrivalTime = Integer.parseInt(parts[0]);
+                        int burstTime = Integer.parseInt(parts[1]);
+                        int priority = Integer.parseInt(parts[2]);
+                        int quantum = Integer.parseInt(parts[3]);
+
+                        // Convert the color string to Color object
+                        String processColor = colors.get(colorIndex % colors.size());
+                        processes.add(new Process(processId, processColor, arrivalTime, burstTime, priority, quantum, contextSwitchTime));
+                        processId++;
+                        numProcesses--;
+                        colorIndex++; // Move to next color
+                    }
+                }
+
+                if (scanner.hasNextLine()) {
+                    String line = scanner.nextLine().trim();
+                    contextSwitchTime = Integer.parseInt(line);
+                }
+                for (Process process : processes) {
+                    process.setContextSwitchTime(contextSwitchTime);
+                }
+            }
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error reading input file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        FCAI a = new FCAI(processes, new Timeline());
         Scheduling scheduling = null;
         String Algorithm = "";
+
         if (e.getSource() == priority) {
-            scheduling = new Priority(processes,new Timeline(), false);
+            scheduling = new Priority(processes, new Timeline(), false);
             Algorithm = "Priority";
-        }
-        else if (e.getSource() == fcai) {
-            scheduling = new FCAI(processes,new Timeline());
+        } else if (e.getSource() == fcai) {
+            scheduling = new FCAI(processes, new Timeline());
             Algorithm = "Fcai";
-        }
-        else if (e.getSource() == srtf) {
-            scheduling = new SRTF(processes,new Timeline());
+        } else if (e.getSource() == srtf) {
+            scheduling = new SRTF(processes, new Timeline());
             Algorithm = "Srtf";
-        }
-        else if (e.getSource() == sjf) {
-            scheduling = new SJF(processes,new Timeline());
+        } else if (e.getSource() == sjf) {
+            scheduling = new SJF(processes, new Timeline());
             Algorithm = "Sjf";
         }
-        scheduling.schedule();
-        SchedulerGUI scheduler = new SchedulerGUI(processes,scheduling.timeline,Algorithm,5);
+
+        // Run the scheduler
+        if (scheduling != null) {
+            scheduling.schedule();
+            SchedulerGUI scheduler = new SchedulerGUI(processes, scheduling.timeline, Algorithm, 0);
+        }
+    }
+
+    public static void main(String[] args) {
+        new MainGui();
     }
 }

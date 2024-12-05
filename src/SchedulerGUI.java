@@ -45,15 +45,17 @@ public class SchedulerGUI extends JFrame {
             g2d.drawString("P" + processes.get(i).getId(), padding-15 , y+(i * height) + 20);
             g2d.setColor(Color.BLACK);
         }
+        int time = 0 ;
         g2d.drawLine(padding, graphHeight - padding, graphWidth - padding, graphHeight - padding);
         for (Pair pair : timeline.getTimeline()) {
             Process process = processes.get(pair.getId());
-
+            x+=(pair.getFirst()-time)*2;
             g.setColor(Color.decode(process.getColor()));
             g.fillRect(x, y + (process.getId() * height), pair.getSecond() * 10, height - 5);
             g.setColor(Color.WHITE);
             x += pair.getSecond() * 10;
-            x+=5*context_time;
+            x+=3*context_time;
+            time= pair.getFirst()+pair.getSecond();
         }
     }
 

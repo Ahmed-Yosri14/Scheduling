@@ -118,7 +118,7 @@ public class FCAI extends Scheduling {
 class ExtendedProcess extends Process{
     public int fcaiFactor;
     public ExtendedProcess(Process process,int fcaiFactor) {
-        super(process.getId(), process.getColor(),process.getArrivalTime(),process.getBurstTime(),process.getPriority(), process.getQuantumTime());
+        super(process.getId(), process.getColor(),process.getArrivalTime(),process.getBurstTime(),process.getPriority(), process.getQuantumTime(),process.getContextSwitchTime());
         this.fcaiFactor=fcaiFactor;
     }
 }

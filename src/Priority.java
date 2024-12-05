@@ -11,26 +11,28 @@ public class Priority extends Scheduling {
 
     @Override
     public void schedule() {
-        processes.sort(Comparator.comparingInt(Process::getArrivalTime));
+        ArrayList<Process>copy = new ArrayList<>(processes);
+        copy.sort(Comparator.comparingInt(Process::getArrivalTime));
         int time = 0 ;
         int cnt = 0 ;
         int idx=0;
         PriorityQueue<Process> queue = new PriorityQueue<>(Comparator.comparingInt(Process::getPriority));
-        while (cnt < processes.size()) {
-            if (idx<processes.size()) {
-                while (processes.get(idx).getArrivalTime() <= time) {
-                    queue.add(processes.get(idx));
+        while (cnt < copy.size()) {
+            if (idx<copy.size()) {
+                while (copy.get(idx).getArrivalTime() <= time) {
+                    queue.add(copy.get(idx));
                     idx++;
-                    if (idx==processes.size()) break;
+                    if (idx==copy.size()) break;
                 }
             }
             if (!queue.isEmpty()){
                 cnt++;
                 Process p = queue.poll();
-                time+=p.getBurstTime();
                 timeline.assign_process(time,p.getBurstTime(),p.getId());
                 processes.get(p.getId()).setWaitingTime(Math.max(time-p.getArrivalTime(), 0));
                 processes.get(p.getId()).setTurnaroundTime(processes.get(p.getId()).getWaitingTime()+processes.get(p.getId()).getBurstTime());
+                time+=p.getBurstTime();
+                time+=p.getContextSwitchTime();
             }
             else time++;
             if (aging){
@@ -39,5 +41,6 @@ public class Priority extends Scheduling {
                 }
             }
         }
+        processes=copy;
     }
 }
