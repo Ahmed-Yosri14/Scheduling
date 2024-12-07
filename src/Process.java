@@ -9,6 +9,7 @@ public class Process {
     private int remainingTime;
     private int quantumTime;
     private int contextSwitchTime;
+    private int effectiveBurstTime;
 
     public Process(int id, String color, int arrivalTime, int burstTime, int priority, int quantumTime,int contextSwitchTime) {
         this.id = id;
@@ -19,6 +20,7 @@ public class Process {
         this.remainingTime=burstTime;
         this.quantumTime=quantumTime;
         this.contextSwitchTime=contextSwitchTime;
+        this.effectiveBurstTime = burstTime;
     }
     public int getContextSwitchTime() {
         return contextSwitchTime;
@@ -87,6 +89,13 @@ public class Process {
 
     public void setTurnaroundTime(int turnaroundTime) {
         this.turnaroundTime = turnaroundTime;
+    }
+    public int getEffectiveBurstTime() {
+        return effectiveBurstTime;
+    }
+
+    public void setEffectiveBurstTime(int effectiveBurstTime) {
+        this.effectiveBurstTime = effectiveBurstTime;
     }
 
     @Override
