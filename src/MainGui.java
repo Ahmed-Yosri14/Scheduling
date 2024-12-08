@@ -39,7 +39,7 @@ public class MainGui extends JFrame implements ActionListener {
 
         // Read the input file and add processes
         try {
-            String fileName = "C:\\Users\\dell\\Documents\\GitHub\\Scheduling\\src\\input.txt";
+            String fileName = "C:\\Users\\miza\\Documents\\GitHub\\Scheduling\\src\\input.txt";
             File file = new File(fileName);
 
             if (!file.exists()) {
