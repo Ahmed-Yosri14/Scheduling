@@ -97,7 +97,10 @@ public class FCAI extends Scheduling {
                 }
                 readyQueue.removeFirst();
                 if (p.getBurstTime()>0) {readyQueue.addLast(new FcaiPair(time,p));}
-                else {lastid=-1;get_by_factor=false;}
+                else {
+                    processes.get(p.getId()).setTurnaroundTime(time-processes.get(p.getId()).getArrivalTime());
+                    processes.get(p.getId()).setWaitingTime(processes.get(p.getId()).getTurnaroundTime()-processes.get(p.getId()).getBurstTime());
+                    lastid=-1;get_by_factor=false;}
         }
     }
 }

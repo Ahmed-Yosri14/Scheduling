@@ -42,7 +42,7 @@ public class SchedulerGUI extends JFrame {
         int x = 20, y = 50, height = 30;
 
         for (int i = 0; i < processes.size(); i++) {
-            g2d.drawString("P" + processes.get(i).getId(), padding-15 , y+(i * height) + 20);
+            g2d.drawString("P" + (processes.get(i).getId()+1), padding-15 , y+(i * height) + 20);
             g2d.setColor(Color.BLACK);
         }
         int time = 0 ;
@@ -65,7 +65,7 @@ public class SchedulerGUI extends JFrame {
 
         for (int i = 0; i < processes.size(); i++) {
             Process process = processes.get(i);
-            data[i][0] = "P" + process.getId();
+            data[i][0] = "P" + (process.getId()+1);
             data[i][1] = process.getColor();
             data[i][2] = process.getArrivalTime();
             data[i][3] = process.getBurstTime();

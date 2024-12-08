@@ -46,6 +46,7 @@ public class Process {
         return quantumTime;
     }
     public void setQuantumTime(int quantumTime) {
+        System.out.println("Quantum time of process "+ (this.id+1)+" changed from "+ this.quantumTime+" to "+quantumTime);
         this.quantumTime = quantumTime;
     }
 
