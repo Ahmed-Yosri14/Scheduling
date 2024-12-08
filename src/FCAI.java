@@ -1,124 +1,103 @@
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class FCAI extends Scheduling {
-    int calcFcaiFactor(Process obj,int timeSpent,double v1,double v2){
-
-        return (10-obj.getPriority())+(int)Math.ceil(obj.getArrivalTime()/v1+obj.getBurstTime()/v2);
-    }
-
+    double v1 = -1;
+    double v2 = -1;
     public FCAI(ArrayList<Process> processes, Timeline timeline) {
         super(processes, timeline);
+    }
+    public void updateFactor(){
+        for (Process process : processes) {
+            v1=Math.max(process.getArrivalTime(),v1);
+            v2=Math.max(process.getBurstTime(),v2);
+        }
+        for (Process process : processes) {
+            process.updateFcaiFactor(v1/10,v2/10);
+        }
     }
 
     @Override
     public void schedule() {
-        int itr=0;
-
-        ArrayList<ExtendedProcess>tot=new ArrayList<>();
-        PriorityQueue<ExtendedProcess>curr=new PriorityQueue<>(new Comparator<ExtendedProcess>() {
-            @Override
-            public int compare(ExtendedProcess o1, ExtendedProcess o2) {
-                int ret= Integer.compare(o1.fcaiFactor,o2.fcaiFactor);
-                if(ret==0)return Integer.compare(o2.getPriority(),o1.getPriority());
-                return ret;
-            }
-        });
-        int [][]times=new int [processes.size()+1][3];
-        // [idx][0] -> arrival time
-        // [idx][1] -> actual execution time
-        // [idx][2] -> total time
-        int mxBurstTime=0;
-        int mxArrivalTime=0;
-        for(var i:processes){
-            mxBurstTime=Math.max(i.getBurstTime(),mxBurstTime);
-            mxArrivalTime=Math.max(i.getArrivalTime(),mxArrivalTime);
+        processes.sort(Comparator.comparingInt(Process::getId));
+        updateFactor();
+        ArrayList<FcaiPair> readyQueue = new ArrayList<>();
+        ArrayList<Process> processCopy = new ArrayList<>();
+        for (Process process : processes) {
+            processCopy.add(process.copy());
         }
-        for(var i:processes){
-            ExtendedProcess temp=new ExtendedProcess(i,calcFcaiFactor(i,0,mxArrivalTime/10.0,mxBurstTime/10.0));
-            tot.add(temp);
-        }
-        tot.sort(Comparator.comparingInt(p->p.getArrivalTime()));
-        int spent=0;
-        ExtendedProcess now=null;
-        while(!tot.isEmpty() || !curr.isEmpty() || now!=null){
-            while(!tot.isEmpty() && tot.getFirst().getArrivalTime()==itr){
-                curr.add(tot.getFirst());
-                tot.removeFirst();
-            }
-
-            if(now==null){
-                if(!curr.isEmpty())
-                now=curr.poll();
-                if(now==null){
-                    itr++;
-                    continue;
+        processCopy.sort(Comparator.comparingInt(Process::getArrivalTime));
+        int time = 0 ;
+        int lastid = -1;
+        boolean get_by_factor = true;
+        while (!processCopy.isEmpty()||!readyQueue.isEmpty()) {
+            if (!processCopy.isEmpty()) {
+                while (processCopy.getFirst().getArrivalTime() <= time) {
+                    readyQueue.addLast(new FcaiPair(time,processCopy.getFirst()));
+                    processCopy.removeFirst();
+                    if (processCopy.isEmpty()) break;
                 }
             }
-
-            if(spent>=Math.ceil(now.getQuantumTime()*0.4) ||now.getBurstTime()==0 || spent==now.getQuantumTime() ){
-                if(now.getBurstTime()==0){
-                    timeline.assign_process(itr-spent,spent,now.getId());
-                    System.out.print(String.format("P%d %d -> ",now.getId(),now.getQuantumTime()));
-                    now.setQuantumTime(now.getQuantumTime()+2);
-                    System.out.println(now.getQuantumTime());
-                    if(!curr.isEmpty())now=curr.poll();
-                    else now=null;
-                    spent=0;
+            Process p = null;
+            if (!readyQueue.isEmpty()&&!get_by_factor) {
+                readyQueue.sort(Comparator.comparingInt(FcaiPair::getFirst));
+                p = readyQueue.getFirst().getSecond();
+                get_by_factor=true;
+            }
+            else if (!readyQueue.isEmpty()&&get_by_factor){
+                int val = readyQueue.getFirst().getSecond().getFcaiFactor();
+                int id = 0;
+                int cnt=0;
+                for (FcaiPair p2 : readyQueue) {
+                    if (p2.getSecond().getFcaiFactor()<val){
+                        val = p2.getSecond().getFcaiFactor();
+                        id = cnt;
+                    }
+                    cnt++;
                 }
-                else if(now.getQuantumTime()==spent){
-                    timeline.assign_process(itr-spent,spent,now.getId());
-                    now.fcaiFactor=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0);
-                    System.out.print(String.format("P%d %d -> ",now.getId(),now.getQuantumTime()));
-                    now.setQuantumTime(now.getQuantumTime()+2);
-                    System.out.println(now.getQuantumTime());
-                    ExtendedProcess temp=now;
-                    if(!curr.isEmpty())now=curr.poll();
-                    else now=null;
-                    curr.add(temp);
-                    spent=0;
+                if (id>0){
+                    FcaiPair temp = readyQueue.get(id);
+                    readyQueue.set(id, readyQueue.get(0));
+                    readyQueue.set(0, temp);
                 }
-                else if(!curr.isEmpty() &&
-                        ( curr.peek().fcaiFactor<=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0))
-                        && spent>Math.ceil(now.getQuantumTime()*0.4) ){
-                    timeline.assign_process(itr-spent,spent,now.getId());
-                    now.fcaiFactor=calcFcaiFactor(now,spent,mxArrivalTime/10.0,mxBurstTime/10.0);
-                    System.out.print(String.format("P%d %d -> ",now.getId(),now.getQuantumTime()));
-                    now.setQuantumTime(now.getQuantumTime()+(now.getQuantumTime()-spent));
-                    System.out.println(now.getQuantumTime());
-                    ExtendedProcess temp=now;
-                    if(!curr.isEmpty())now=curr.poll();
-                    else now=null;
-                    curr.add(temp);
-                    spent=0;
-                }
+                p = readyQueue.getFirst().getSecond();
 
             }
-            if(now!=null)
-            now.setBurstTime(now.getBurstTime()-1);
-            spent++;
-            itr++;
-        }
-        for(var idx:processes)
-        for(var i : timeline.getTimeline()){
-            if(i.getId()==idx.getId()){
-                times[idx.getId()][0]=idx.getArrivalTime();
-                times[idx.getId()][1]+=i.getSecond();
-                times[idx.getId()][2]=i.getSecond()+i.getFirst();
+            else {
+                time++;
+                continue;
             }
+                if (lastid!=p.getId()) {
+                    for (FcaiPair q : readyQueue) {
+                        if (q.getSecond().getId()==lastid){
+                            if (time-q.getSecond().getArrivalTime()==(q.getSecond().getQuantumTime())){
+                                q.getSecond().setQuantumTime(q.getSecond().getQuantumTime()+2);
+                            }
+                            else q.getSecond().setQuantumTime(2*q.getSecond().getQuantumTime()-(time-q.getSecond().getArrivalTime()));
+                            break;
+                        }
+                    }
+                    int add = (int) Math.ceil(0.4*p.getQuantumTime());
+                    add = Math.max(add,0);
+                    timeline.assign_process(time, add, p.getId());
+                    p.setBurstTime(p.getBurstTime()-add);
+                    p.updateFcaiFactor(v1/10,v2/10,processes.get(p.getId()).getArrivalTime());
+                    p.setArrivalTime(time);
+                    time+=add;
+                    lastid=p.getId();
+                }
+                else if (lastid==p.getId()){
+                    timeline.assign_process(time, 1, p.getId());
+                    time++;
+                    p.setBurstTime(p.getBurstTime()-1);
+                    p.updateFcaiFactor(v1/10,v2/10,processes.get(p.getId()).getArrivalTime());
+                    if (time-p.getArrivalTime()==p.getQuantumTime()){
+                        get_by_factor=false;
+                        p.setQuantumTime(p.getQuantumTime()+2);
+                    }
+                }
+                readyQueue.removeFirst();
+                if (p.getBurstTime()>0) {readyQueue.addLast(new FcaiPair(time,p));}
+                else {lastid=-1;get_by_factor=false;}
         }
-        for(var idx:processes){
-            idx.setWaitingTime((times[idx.getId()][2]-times[idx.getId()][0])-times[idx.getId()][1]);
-            idx.setTurnaroundTime(times[idx.getId()][2]-times[idx.getId()][0]);
-        }
-
-    }
-}
-class ExtendedProcess extends Process{
-    public int fcaiFactor;
-    public ExtendedProcess(Process process,int fcaiFactor) {
-        super(process.getId(), process.getColor(),process.getArrivalTime(),process.getBurstTime(),process.getPriority(), process.getQuantumTime(),process.getContextSwitchTime());
-        this.fcaiFactor=fcaiFactor;
     }
 }

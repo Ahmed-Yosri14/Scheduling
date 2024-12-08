@@ -10,7 +10,7 @@ public class Process {
     private int quantumTime;
     private int contextSwitchTime;
     private int effectiveBurstTime;
-
+    private int fcaiFactor;
     public Process(int id, String color, int arrivalTime, int burstTime, int priority, int quantumTime,int contextSwitchTime) {
         this.id = id;
         this.color = color;
@@ -22,13 +22,25 @@ public class Process {
         this.contextSwitchTime=contextSwitchTime;
         this.effectiveBurstTime = burstTime;
     }
+
+    public void updateFcaiFactor(double v1 , double v2){
+        this.fcaiFactor=(10-this.getPriority())+((int)Math.ceil(this.getArrivalTime()/v1+this.getBurstTime()/v2));
+    }
+    public void updateFcaiFactor(double v1 , double v2,int arrival){
+        this.fcaiFactor=(10-this.getPriority())+((int)Math.ceil(arrival/v1+this.getBurstTime()/v2));
+    }
+    public void updateFcaiFactor(int factor){
+        this.fcaiFactor=factor;
+    }
+    public int getFcaiFactor() {
+        return fcaiFactor;
+    }
     public int getContextSwitchTime() {
         return contextSwitchTime;
     }
     public void setContextSwitchTime(int contextSwitchTime) {
         this.contextSwitchTime = contextSwitchTime;
     }
-
 
     public int getQuantumTime() {
         return quantumTime;
@@ -93,7 +105,11 @@ public class Process {
     public int getEffectiveBurstTime() {
         return effectiveBurstTime;
     }
-
+    public Process copy() {
+        Process p= new Process(id, color, arrivalTime, burstTime, priority, quantumTime,contextSwitchTime);
+        p.updateFcaiFactor(this.fcaiFactor);
+        return p ;
+    }
     public void setEffectiveBurstTime(int effectiveBurstTime) {
         this.effectiveBurstTime = effectiveBurstTime;
     }
