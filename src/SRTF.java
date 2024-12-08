@@ -7,6 +7,7 @@ public class SRTF extends Scheduling {
         super(processes, timeline);
     }
    int last_process_id=-1;
+    int max_waiting_time=20;
     @Override
     public void schedule() {
         ArrayList<Process> deepCopy = new ArrayList<>();
@@ -17,11 +18,13 @@ public class SRTF extends Scheduling {
         deepCopy.sort(Comparator.comparingInt(Process::getId));
         processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
         PriorityQueue<Process> queue = new PriorityQueue<>(Comparator.comparingInt(p -> p.getRemainingTime()));
+        PriorityQueue<Process> starvation = new PriorityQueue<>(Comparator.comparingInt(p -> p.getArrivalTime()));
         int currentTime = 0;
         int completed = 0;
         while (completed < processes.size()) {
             for (Process process : processes) {
-                int x =(process.getArrivalTime()),y=process.getRemainingTime();
+                if (currentTime-process.getArrivalTime()>max_waiting_time&&!starvation.contains(process)&&process.getRemainingTime()>0)
+                    starvation.add(process);
                 if (process.getArrivalTime() <= currentTime && process.getRemainingTime() > 0&&!queue.contains(process)) {
                     queue.add(process);
                 }
@@ -30,7 +33,12 @@ public class SRTF extends Scheduling {
                 currentTime++;
                 continue;
             }
-            Process currentProcess = queue.poll();
+            Process currentProcess;
+            if (starvation.isEmpty())
+                currentProcess = queue.poll();
+            else
+                currentProcess = starvation.poll();
+
             if (last_process_id!=currentProcess.getId()&&last_process_id!=-1){
                 currentTime+=currentProcess.getContextSwitchTime();
             }
