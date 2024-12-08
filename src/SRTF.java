@@ -18,16 +18,18 @@ public class SRTF extends Scheduling {
         deepCopy.sort(Comparator.comparingInt(Process::getId));
         processes.sort(Comparator.comparingInt(p -> p.getArrivalTime()));
         PriorityQueue<Process> queue = new PriorityQueue<>(Comparator.comparingInt(p -> p.getRemainingTime()));
-        PriorityQueue<Process> starvation = new PriorityQueue<>(Comparator.comparingInt(p -> p.getArrivalTime()));
+        ArrayList<Process> starvation = new ArrayList<>();
         int currentTime = 0;
         int completed = 0;
         while (completed < processes.size()) {
             for (Process process : processes) {
-                if (currentTime-process.getArrivalTime()>max_waiting_time&&!starvation.contains(process)&&process.getRemainingTime()>0)
-                    starvation.add(process);
                 if (process.getArrivalTime() <= currentTime && process.getRemainingTime() > 0&&!queue.contains(process)) {
                     queue.add(process);
                 }
+            }
+            for (Process process : queue) {
+                if (currentTime-process.getArrivalTime()>max_waiting_time&&!starvation.contains(process)&&process.getRemainingTime()>0)
+                {starvation.addLast(process);queue.remove(process);}
             }
             if (queue.isEmpty()) {
                 currentTime++;
@@ -37,7 +39,7 @@ public class SRTF extends Scheduling {
             if (starvation.isEmpty())
                 currentProcess = queue.poll();
             else
-                currentProcess = starvation.poll();
+                currentProcess = starvation.removeFirst();
 
             if (last_process_id!=currentProcess.getId()&&last_process_id!=-1){
                 currentTime+=currentProcess.getContextSwitchTime();

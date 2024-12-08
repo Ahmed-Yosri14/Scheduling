@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -37,9 +36,8 @@ public class MainGui extends JFrame implements ActionListener {
         ArrayList<Process> processes = new ArrayList<>();
         int contextSwitchTime = 0;
 
-        // Read the input file and add processes
         try {
-            String fileName = "C:\\Users\\DELL\\IdeaProjects\\Scheduling\\src\\input.txt";
+            String fileName = "input.txt";
             File file = new File(fileName);
 
             if (!file.exists()) {
@@ -47,9 +45,9 @@ public class MainGui extends JFrame implements ActionListener {
             }
 
             try (Scanner scanner = new Scanner(file)) {
-                int numProcesses = Integer.parseInt(scanner.nextLine()); // Read number of processes
-                int processId = 0; // Starting process ID
-                int colorIndex = 0; // To cycle through colors
+                int numProcesses = Integer.parseInt(scanner.nextLine());
+                int processId = 0;
+                int colorIndex = 0;
 
                 while (scanner.hasNextLine() && numProcesses > 0) {
                     String line = scanner.nextLine();
@@ -61,12 +59,11 @@ public class MainGui extends JFrame implements ActionListener {
                         int priority = Integer.parseInt(parts[2]);
                         int quantum = Integer.parseInt(parts[3]);
 
-                        // Convert the color string to Color object
                         String processColor = colors.get(colorIndex % colors.size());
                         processes.add(new Process(processId, processColor, arrivalTime, burstTime, priority, quantum, contextSwitchTime));
                         processId++;
                         numProcesses--;
-                        colorIndex++; // Move to next color
+                        colorIndex++;
                     }
                 }
 

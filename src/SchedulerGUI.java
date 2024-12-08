@@ -54,7 +54,7 @@ public class SchedulerGUI extends JFrame {
             g.fillRect(x, y + (process.getId() * height), pair.getSecond() * 10, height - 5);
             g.setColor(Color.WHITE);
             x += pair.getSecond() * 10;
-            x+=3*context_time;
+            x+=4*context_time;
             time= pair.getFirst()+pair.getSecond();
         }
     }
