@@ -65,7 +65,6 @@ public class FCAI extends Scheduling {
             }
             else {
                 time++;
-                add--;
                 continue;
             }
                 if (lastid!=p.getId()) {
@@ -89,7 +88,6 @@ public class FCAI extends Scheduling {
                     p.setArrivalTime(time);
                     time+=addt;
                     lastid=p.getId();
-                    add= p.getContextSwitchTime();
                 }
                 else if (lastid==p.getId()){
                     timeline.assign_process(time, 1, p.getId());
@@ -99,7 +97,6 @@ public class FCAI extends Scheduling {
                     if (time-p.getArrivalTime()==p.getQuantumTime()){
                         get_by_factor=false;
                     }
-                    add= p.getContextSwitchTime();
                 }
                 readyQueue.removeFirst();
                 if (p.getBurstTime()>0) {readyQueue.addLast(new FcaiPair(time,p));}
