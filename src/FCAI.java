@@ -3,6 +3,7 @@ import java.util.*;
 public class FCAI extends Scheduling {
     double v1 = -1;
     double v2 = -1;
+    int add = 0;
     public FCAI(ArrayList<Process> processes, Timeline timeline) {
         super(processes, timeline);
     }
@@ -20,6 +21,7 @@ public class FCAI extends Scheduling {
     public void schedule() {
         processes.sort(Comparator.comparingInt(Process::getId));
         updateFactor();
+        add = processes.get(0).getContextSwitchTime();
         ArrayList<FcaiPair> readyQueue = new ArrayList<>();
         ArrayList<Process> processCopy = new ArrayList<>();
         for (Process process : processes) {
@@ -64,9 +66,11 @@ public class FCAI extends Scheduling {
             }
             else {
                 time++;
+                add--;
                 continue;
             }
                 if (lastid!=p.getId()) {
+                    time+=add;
                     for (FcaiPair q : readyQueue) {
                         if (q.getSecond().getId()==lastid){
                             if (time-q.getSecond().getArrivalTime()==(q.getSecond().getQuantumTime())){
@@ -84,6 +88,7 @@ public class FCAI extends Scheduling {
                     p.setArrivalTime(time);
                     time+=add;
                     lastid=p.getId();
+                    add= p.getContextSwitchTime();
                 }
                 else if (lastid==p.getId()){
                     timeline.assign_process(time, 1, p.getId());
@@ -94,6 +99,7 @@ public class FCAI extends Scheduling {
                         get_by_factor=false;
                         p.setQuantumTime(p.getQuantumTime()+2);
                     }
+                    add= p.getContextSwitchTime();
                 }
                 readyQueue.removeFirst();
                 if (p.getBurstTime()>0) {readyQueue.addLast(new FcaiPair(time,p));}
