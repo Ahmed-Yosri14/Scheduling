@@ -4,6 +4,7 @@ import java.util.PriorityQueue;
 
 public class Priority extends Scheduling {
     private final boolean aging;
+    int add = 0;
     public Priority(ArrayList<Process> processes, Timeline timeline, boolean aging) {
         super(processes, timeline);
         this.aging = aging;
@@ -11,6 +12,7 @@ public class Priority extends Scheduling {
 
     @Override
     public void schedule() {
+        add = processes.get(0).getContextSwitchTime();
         ArrayList<Process>copy = new ArrayList<>(processes);
         copy.sort(Comparator.comparingInt(Process::getArrivalTime));
         int time = 0 ;
@@ -33,8 +35,9 @@ public class Priority extends Scheduling {
                 processes.get(p.getId()).setTurnaroundTime(processes.get(p.getId()).getWaitingTime()+processes.get(p.getId()).getBurstTime());
                 time+=p.getBurstTime();
                 time+=p.getContextSwitchTime();
+                add=p.getContextSwitchTime();
             }
-            else time++;
+            else {time++;add--;}
             if (aging){
                 for (Process p : queue) {
                     p.increasePriority();

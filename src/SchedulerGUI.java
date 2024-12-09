@@ -11,7 +11,7 @@ public class SchedulerGUI extends JFrame {
         this.timeline = timeline;
         this.context_time = context_time;
         setTitle("CPU Scheduling Simulator");
-        setSize(900, 600);
+        setSize(1300, 600);
         setLayout(new BorderLayout());
         add(createGraphPanel(), BorderLayout.CENTER);
         add(createProcessTablePanel(), BorderLayout.EAST);

@@ -21,7 +21,6 @@ public class FCAI extends Scheduling {
     public void schedule() {
         processes.sort(Comparator.comparingInt(Process::getId));
         updateFactor();
-        add = processes.get(0).getContextSwitchTime();
         ArrayList<FcaiPair> readyQueue = new ArrayList<>();
         ArrayList<Process> processCopy = new ArrayList<>();
         for (Process process : processes) {
@@ -70,7 +69,6 @@ public class FCAI extends Scheduling {
                 continue;
             }
                 if (lastid!=p.getId()) {
-                    time+=add;
                     for (FcaiPair q : readyQueue) {
                         if (q.getSecond().getId()==lastid){
                             if (time-q.getSecond().getArrivalTime()==(q.getSecond().getQuantumTime())){
@@ -80,13 +78,16 @@ public class FCAI extends Scheduling {
                             break;
                         }
                     }
-                    int add = (int) Math.ceil(0.4*p.getQuantumTime());
-                    add = Math.max(add,0);
-                    timeline.assign_process(time, add, p.getId());
-                    p.setBurstTime(p.getBurstTime()-add);
+                    time+=add;
+                    int addt = (int) Math.ceil(0.4*p.getQuantumTime());
+                    addt = Math.min(addt,p.getBurstTime());
+                    addt = Math.max(addt,0);
+                    timeline.assign_process(time, addt, p.getId());
+
+                    p.setBurstTime(p.getBurstTime()-addt);
                     p.updateFcaiFactor(v1/10,v2/10,processes.get(p.getId()).getArrivalTime());
                     p.setArrivalTime(time);
-                    time+=add;
+                    time+=addt;
                     lastid=p.getId();
                     add= p.getContextSwitchTime();
                 }
@@ -97,7 +98,6 @@ public class FCAI extends Scheduling {
                     p.updateFcaiFactor(v1/10,v2/10,processes.get(p.getId()).getArrivalTime());
                     if (time-p.getArrivalTime()==p.getQuantumTime()){
                         get_by_factor=false;
-                        p.setQuantumTime(p.getQuantumTime()+2);
                     }
                     add= p.getContextSwitchTime();
                 }

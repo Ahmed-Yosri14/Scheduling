@@ -27,6 +27,7 @@ public class Process {
         this.fcaiFactor=(10-this.getPriority())+((int)Math.ceil(this.getArrivalTime()/v1+this.getBurstTime()/v2));
     }
     public void updateFcaiFactor(double v1 , double v2,int arrival){
+        System.out.println("P"+(this.getId()+1)+" Factor changed from "+this.fcaiFactor+ " to " +((10-this.getPriority())+((int)Math.ceil(arrival/v1+this.getBurstTime()/v2))));
         this.fcaiFactor=(10-this.getPriority())+((int)Math.ceil(arrival/v1+this.getBurstTime()/v2));
     }
     public void updateFcaiFactor(int factor){
